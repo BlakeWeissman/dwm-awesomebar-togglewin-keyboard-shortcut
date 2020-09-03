@@ -1,0 +1,43 @@
+diff --git a/config.h b/config.h
+index 327e791..56923a6 100644
+--- a/config.h
++++ b/config.h
+@@ -107,6 +107,7 @@ static Key keys[] = {
+ 	//{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[2]} },
+ 	{ MODKEY,												XK_space,	zoom,		{0} },
+ 	{ MODKEY,												XK_f,  cyclelayout,    {.i = -1 } },
++	{ MODKEY,												XK_m,  togglewin,      {0} },
+ 	//TODO: Bind key to xkeys?
+ 	{ 0,														XK_Print,	spawn,	SHCMD("maim pictures/Screenshots/pic-full-$(date '+%y%m%d-%H%M-%S').png") },
+ };
+diff --git a/dwm.c b/dwm.c
+index 7947419..2db82da 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -873,7 +873,7 @@ expose(XEvent *e)
+ void
+ focus(Client *c)
+ {
+-	if (!c || !ISVISIBLE(c) || HIDDEN(c))
++	if (!c || !ISVISIBLE(c))
+ 		for (c = selmon->stack; c && (!ISVISIBLE(c) || HIDDEN(c)); c = c->snext);
+ 	if (selmon->sel && selmon->sel != c)
+ 		unfocus(selmon->sel, 0);
+@@ -1908,14 +1908,11 @@ toggleview(const Arg *arg)
+ void
+ togglewin(const Arg *arg)
+ {
+-	Client *c = (Client*)arg->v;
+-	if (c == selmon->sel)
+-		hide(c);
++	Client *c = (Client*)selmon->sel;
++	if (HIDDEN(c))
++		show(c);
+ 	else {
+-		if (HIDDEN(c))
+-			show(c);
+-		focus(c);
+-		restack(selmon);
++		hide(c);
+ 	}
+ }
